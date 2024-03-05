@@ -1,8 +1,10 @@
 import express from "express";
-import apiRoute from "./utils/api.js";
-import bodyParser from 'body-parser';
+import  { apiRoute , apiProtected } from "./utils/api.js";
 import mongoose from 'mongoose'
 import { DB_CONNECT } from "./utils/constants.js";
+import AuthMiddleware from "./middlewares/AuthMiddleware.js";
+
+const PORT = 8000;
 
 
 const app = express();
@@ -15,11 +17,11 @@ try {
 }
 
 
-const PORT = 8000;
 
 app.use(express.json())
 
-app.use('/api/',apiRoute)
+app.use('/api/',apiRoute);
+app.use('/api/',AuthMiddleware,apiProtected);
 
 app.listen(PORT , ()=>console.log(`server is running on port  ${PORT}`));
 

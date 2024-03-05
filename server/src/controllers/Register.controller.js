@@ -17,12 +17,13 @@ const Register = async (req, res)=>{
         const salt = await bcrypt.genSalt(10);
         const hashedPassword =  await bcrypt.hash(password,salt)
 
-     // saving to db
+     
      const userExist = await User.findOne({ $or : [{
         email: email
      },{
         username : username
      }]});
+     // saving to db
      if(userExist){
         return res.json(jsonGenerate(statuscode.UNPROCESSABLE_ENTITY,"Sorry..this is already exist"))
      }
@@ -37,13 +38,14 @@ const Register = async (req, res)=>{
                 const token = Jwt.sign({userId: result._id},JWT_TOKEN_SECRET)
 
                 res.json(jsonGenerate(statuscode.SUCCESS,"Registration successful", {userId : result._id,token:token}))
-            } catch (error) {
+            } 
+            catch (error) {
                 console.log(error);
-                res.status(500).json(jsonGenerate(statuscode.SERVER_ERROR,"Internal server error",null))
+                res.json(jsonGenerate(statuscode.SERVER_ERROR,"Internal server error",null))
             }     
          }
-         else{
-            res.json(jsonGenerate(statuscode.VALIDATION_ERROR,"OOPS...validation error", errors.mapped()))
-        }
+            
+            res.json(jsonGenerate(statuscode.VALIDATION_ERROR,"Validation error", errors.mapped()))
+        
     }
 export default Register;
